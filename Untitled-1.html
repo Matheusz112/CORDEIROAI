@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sua Página</title>
+
+    <style>
+        /* Estilos gerais */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.3s;
+        }
+
+            /* Estilos do tema neon */
+            body.neon-theme {
+                background: #262626;
+                color: #fff;
+            }
+
+            /* Estilos do tema escuro */
+            body.dark-theme {
+                background: #1a1a1a;
+                color: #fff;
+            }
+
+            /* Estilos do tema branco */
+            body.white-theme {
+                background: #fff;
+                color: #000;
+            }
+
+        /* Estilos do cabeçalho */
+        header {
+            background: #1d92e0;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            header h1 {
+                font-size: 24px;
+                margin: 0;
+            }
+
+            header nav ul {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                display: flex;
+            }
+
+            header nav li {
+                margin-right: 20px;
+            }
+
+            header nav a {
+                text-decoration: none;
+                color: #fff;
+                font-weight: bold;
+                font-size: 18px;
+                transition: color 0.3s;
+            }
+
+                header nav a:hover {
+                    color: #ffcc00;
+                }
+
+        .descri {
+            font-size: 16px; /* Tamanho da fonte */
+            color: black; /* Cor do texto preto */
+            margin-bottom: 10px; /* Espaço abaixo do elemento */
+            line-height: 1.5; /* Altura da linha */
+        }
+        /* Estilos dos botões */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+            .button-container button {
+                flex-basis: 30%;
+                padding: 10px;
+                border: none;
+                border-radius: 5px;
+                font-size: 16px;
+                cursor: pointer;
+                transition: background-color 0.3s, transform 0.3s;
+            }
+
+                .button-container button.scan {
+                    background: #00cc00;
+                    color: #fff;
+                }
+
+                    .button-container button.scan:hover {
+                        background: #00aa00;
+                    }
+
+                .button-container button.clear {
+                    background: #cc0000;
+                    color: #fff;
+                }
+
+                    .button-container button.clear:hover {
+                        background: #aa0000;
+                    }
+
+                .button-container button.enter {
+                    background: #ffee10;
+                }
+
+                    .button-container button.enter:hover {
+                        background: #ffcc00;
+                    }
+
+        /* Estilos da configuração do tema */
+        .theme-config {
+            display: none;
+            flex-direction: column;
+            position: absolute;
+            top: 45px;
+            right: 10px;
+            background: #1d92e0;
+            border-radius: 5px;
+            padding: 10px;
+            transition: background-color 0.3s;
+        }
+
+            .theme-config a {
+                text-decoration: none;
+                color: #fff;
+                margin-bottom: 5px;
+                cursor: pointer;
+                font-size: 16px;
+                transition: color 0.3s;
+            }
+
+                .theme-config a:hover {
+                    color: #ffcc00;
+                }
+
+        /* Estilos do logotipo */
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+            .logo-container img {
+                max-width: 100px;
+                max-height: 100px;
+                border-radius: 50%;
+                background: #1d92e0;
+                padding: 5px;
+                transition: transform 0.3s;
+            }
+
+                .logo-container img:hover {
+                    transform: scale(1.1);
+                }
+
+        /* Estilos do ícone de sair */
+        .logout-icon {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Estilos do formulário */
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f2f2f2;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            transition: box-shadow 0.3s;
+        }
+
+            .form-container:hover {
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            }
+
+            .form-container input {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+        /* Estilos do logo circular */
+        .logo {
+            width: 100px;
+            height: 100px;
+            background-color: #1d92e0;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            margin-top: 20px;
+            transition: transform 0.3s;
+        }
+
+            .logo img {
+                max-width: 80px;
+                max-height: 80px;
+            }
+
+        /* Animação de rotação do ícone de configurações */
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .config-icon {
+            font-size: 24px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+            .config-icon:hover {
+                animation: spin 2s infinite linear;
+            }
+        /* Estilos do botão "Enviar ao Banco de Dados" com efeito de neon */
+        .submit-database.neon-button {
+            background: linear-gradient(45deg, #00cc00, #ffcc00);
+            color: #fff;
+            text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+            transition: background-color 0.3s, transform 0.3s;
+            animation: neon-pulse 1.5s ease-in-out infinite;
+        }
+
+            .submit-database.neon-button:hover {
+                background: linear-gradient(45deg, #00aa00, #ffaa00);
+            }
+
+        @keyframes neon-pulse {
+            0%, 100% {
+                text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+                box-shadow: 0 0 10px #00ff00;
+            }
+
+            50% {
+                text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00;
+                box-shadow: 0 0 5px #00ff00;
+            }
+        }
+  .custom-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+  }
+  /* Estilos para a imagem */
+  .custom-popup img {
+    width: 100%;
+    max-width: 400px;
+  }
+  /* Estilos para o texto de atenção */
+  .custom-popup p.attention {
+    color: red;
+    font-weight: bold;
+  }
+  /* Estilos para o botão de fechar */
+  .custom-popup button.close-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  .custom-popup button.close-btn:hover {
+    background-color: darkred;
+  }
+        .balck{
+            color:black
+        }
+        .matheus-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+        }
+
+        .matheus-popup-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .matheus-close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 50px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        #theus {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .theus-content {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+            .theus-content img {
+                width: 100%;
+                max-width: 300px;
+                height: auto;
+                margin-bottom: 10px;
+            }
+
+        #fechar-theus {
+            background: red;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #henri {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .henri-content {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+            .henri-content img {
+                width: 100%;
+                max-width: 300px;
+                height: auto;
+                margin-bottom: 10px;
+            }
+
+        #fechar-henri {
+            background: red;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+
+<body class="neon-theme">
+    <header>
+        <h1>CORDEIRO-IA</h1>
+        <nav>
+            <ul>
+                <li><a href="Untitled-1.html">Início</a></li>
+                <li><a href="textoemimagem.html">Texto em Imagem</a></li>
+                <li><a href="CONTAR.html">Contar Produtos</a></li>
+                <li><a href="DadosValidade.html">Dados de Produtos</a></li>
+                <li class="config-icon" onclick="toggleThemeConfig()">&#9881;</li>
+                <li class="logout-icon" onclick="confirmExit()">&#128682;</li>
+            </ul>
+        </nav>
+    </header>
+    <div class="logo-container">
+        <div class="logo">
+            <img src="Untitled (2).png" alt="Logo">
+        </div>
+    </div>
+    <div id="matheus-popup" class="matheus-popup">
+        <div class="matheus-popup-content">
+            <span class="matheus-close-button" onclick="closeMatheusPopup()">&times;</span>
+            <p class="balck">Produto enviado com sucesso para nossa empresa!</p>
+            <img src="https://i.gifer.com/7efs.gif" alt="Imagem de sucesso">
+        </div>
+    </div>
+
+    <div class="form-container" id="form-container">
+        <input type="text" id="nome-produtoO" placeholder="Nome do Produto" required>
+        <input type="text" id="Quantidade" placeholder="Quantidade" required>
+        <input type="number" id="codigo-barras" placeholder="Código de Barras:" required>
+        <input type="date" id="vencimento" placeholder="Data de vencimento do produto:" required>
+        <button class="scan" onclick="verificarVencimento();">Verificar se Vende</button>
+        <p class="descri" id="meuID">Descrição:</p>
+        <button class="submit-database" onclick="enviarDadosAoBanco()">Enviar ao Banco de Dados</button>
+    </div>
+    <div class="button-container">
+        <button class="scan" onclick="scanBarcode()">Scanear de Códigos de Barras</button>
+        <button class="clear" onclick="limparFormulario()">Limpar Formulário</button>
+
+        <button class="enter" onclick="digitar()">Adicionar produto para automação de processo</button>
+    </div>
+    <div class="custom-popup" id="custom-popup">
+        <p class="attention">ATENÇÃO</p>
+        <img src="https://i.pinimg.com/originals/b8/cf/78/b8cf78c6cd751c3331a96b4ed0b08e81.gif" alt="Imagem de atenção" style="max-width: 30%;">
+        
+        <p class="balck">Recomendamos consultar seu supervisor antes de confirmar a data deste produto, devido à nossa quantidade limitada e prazo estendido.</p>
+        <button class="close-btn" onclick="fecharPopup()">Fechar</button>
+    </div>
+    <div class="theme-config" id="theme-options">
+        <a href="#" onclick="changeTheme('neon')">Tema Neon</a>
+        <a href="#" onclick="changeTheme('dark')">Tema Escuro</a>
+        <a href="#" onclick="changeTheme('white')">Tema Branco</a>
+    </div>
+    <div id="theus">
+        <div class="theus-content">
+            <h1 class="black">ATENÇÃO</h1>
+            <img src="https://gifdb.com/images/high/cute-calendar-sticker-animated-graphic-5jio11mx3sxzgdlc.gif" alt="Imagem do Theus" style="max-width: 10%;">
+            <p class="black" style="color: black;">Detectamos quantidades altas e um curto período de vendas, em relação à data desse produto.</p>
+            <p class="black" style="color: black;">Sugerimos aplicar este produto e acompanhar regularmente sua data de validade, além de avaliar continuamente o desempenho das vendas associadas a ele.</p>
+
+            <button id="fechar-theus" style="display: block; margin: 10px auto;">Fechar</button>
+        </div>
+    </div>
+    <div id="henri">
+        <div class="henri-content">
+            <h1 style="color: black;">ERRO</h1>
+            <img src="https://cdn.dribbble.com/users/2469324/screenshots/6538803/comp_3.gif" alt="Imagem do Henri" style="max-width: 10%;">
+            <p style="color: black;">Por favor, preencha todos os campos antes de enviar os dados.</p>
+            <button id="fechar-henri">Fechar</button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+
+
+
+        function changeTheme(theme) {
+            document.body.className = theme + '-theme';
+        }
+
+        function toggleThemeConfig() {
+            const themeConfig = document.getElementById('theme-options');
+            themeConfig.style.display = themeConfig.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function confirmExit() {
+            var exit = confirm('Tem certeza que deseja sair?');
+            if (exit) {
+                // Adicione aqui a lógica para sair da aplicação
+            }
+        }
+
+        function scanBarcode() {
+
+            const newPageURL = 'HTMLPage1.html'; // Replace with the actual URL of the new page
+
+            // Navigate to the new HTML page
+            window.open(newPageURL, '_blank');
+        }
+
+        function limparFormulario() {
+            document.getElementById("nome-produtoO").value = "";
+            document.getElementById("Quantidade").value = "";
+            document.getElementById("codigo-barras").value = "";
+            document.getElementById("vencimento").value = "";
+
+        }
+
+        function digitar() {
+            const newPageURL = 'ACHARPRODUTOS.html'; // Replace with the actual URL of the new page
+
+            // Navigate to the new HTML page
+            window.open(newPageURL, '_blank');
+        }
+        document.getElementById("fechar-theus").addEventListener("click", function () {
+            document.getElementById("theus").style.display = "none";
+        });
+        function enviarDadosAoBanco() {
+            const produto = document.getElementById("nome-produtoO").value;
+            const quantidade = document.getElementById("Quantidade").value;
+            const cdb = document.getElementById("codigo-barras").value;
+            const vencimento = document.getElementById("vencimento").value;
+            const desci = document.getElementById("meuID");
+            console.log('Produto:', produto);
+            console.log('Quantidade:', quantidade);
+            console.log('Codigo:', vencimento);
+            if (produto.trim() === "" || quantidade.trim() === "" || cdb.trim() === "" || vencimento.trim() === "") {
+                document.getElementById("henri").style.display = "flex";
+                return; // Impede que o código continue se os campos não estiverem preenchidos
+            }
+            else {
+                fetch('https://api.baserow.io/api/database/rows/table/150731/', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Token QNhuEjQ6tUb2CmQyN2B5ipfhC61gLfXe',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "field_987673": produto,
+                        "field_987674": quantidade,
+                        "field_990343": cdb,
+                        "field_991829": vencimento
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        showMatheusPopup();
+                        localStorage.removeItem("codigoBarras");
+                        localStorage.removeItem("Bar");
+                        nome = "";
+                        document.getElementById("nome-produtoO").value = "";
+                        document.getElementById("Quantidade").value = "";
+                        document.getElementById("codigo-barras").value = "";
+                        document.getElementById("vencimento").value = "";
+                    })
+                    .catch(error => console.error(error));
+
+            }
+
+
+        }
+        function showMatheusPopup() {
+            var popup = document.getElementById("matheus-popup");
+            popup.style.display = "block";
+            setTimeout(function () {
+                closeMatheusPopup();
+            }, 4000); // Fechar o pop-up após 4 segundos
+        }
+        document.getElementById("fechar-henri").addEventListener("click", function () {
+            document.getElementById("henri").style.display = "none";
+        });
+
+        // Função para fechar o pop-up
+        function closeMatheusPopup() {
+            var popup = document.getElementById("matheus-popup");
+            popup.style.display = "none";
+        }
+        // Função para verificar se cdb é igual a algum valor constantemente
+        function verificarSempreQueAtualizar() {
+            // Obtém o elemento com o ID "codigo-barras"
+            const desci = document.getElementById("meuID");
+            const codigoBarrasInput = document.getElementById("codigo-barras");
+
+            const produtoInput = document.getElementById("nome-produtoO");
+            codigoBarrasInput.addEventListener("input", function () {
+                const cdbS = codigoBarrasInput.value;
+
+                axios({
+                    method: "GET",
+                    url: "https://api.baserow.io/api/database/rows/table/207130/?user_field_names=true",
+                    headers: {
+                        Authorization: "Token PUvStdXJlDa0GsRVweZL5qb6mknFgC8a"
+                    }
+                })
+                    .then(response => {
+                        const tables = response.data.results;
+
+
+                        tables.forEach(table => {
+                            const vercodigos = table.BARCODE;
+                            console.log(vercodigos);
+                            const vernomes = table.NOMEPRODUTOCODE;
+                            console.log(vernomes);
+                            const verdescri = table.DESCRIÇAO;
+                            console.log(verdescri);
+
+                            // Verifique se cdb é igual a vercodigos
+                            if (cdbS === vercodigos) {
+                                // Faça algo sempre que o input for atualizado e a condição for atendida
+                                console.log("Encontrou um valor igual: " + cdbS);
+                                produtoInput.value = vernomes;
+                                desci.textContent += verdescri;
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            });
+        }
+
+        // Chame a função para verificar sempre que o input é atualizado
+        verificarSempreQueAtualizar();
+
+        function verificarVencimento() {
+            var dataVencimentoInput = document.getElementById("vencimento");
+            var quantidadeEstoqueInput = document.getElementById("Quantidade");
+
+            // Obtém os valores dos campos de entrada
+            var dataVencimento = new Date(dataVencimentoInput.value);
+            var quantidadeEmEstoque = parseInt(quantidadeEstoqueInput.value);
+
+            // Verifica se os campos estão preenchidos
+            if (dataVencimentoInput.value && quantidadeEstoqueInput.value) {
+                // Data atual
+                var dataAtual = new Date();
+
+                // Calcula a diferença em milissegundos entre as duas datas
+                var diferenca = dataVencimento - dataAtual;
+
+                // Converte a diferença para dias
+                var diasRestantes = Math.floor(diferenca / (1000 * 60 * 60 * 24));
+
+                if (quantidadeEmEstoque <= 20 && diasRestantes >= 5) {
+                    document.getElementById("custom-popup").style.display = "block";
+                } else {
+                    document.getElementById("theus").style.display = "flex";
+                }
+            }
+        }
+
+        verificarVencimento();
+        function fecharPopup() {
+            document.getElementById("custom-popup").style.display = "none";
+        }
+    </script>
+</body>
+</html>
