@@ -255,6 +255,110 @@
                 box-shadow: 0 0 5px #00ff00;
             }
         }
+        .suces {
+            display: none;
+            position: fixed;
+            top: 50%; /* Posição vertical no centro */
+            left: 50%; /* Posição horizontal no centro */
+            transform: translate(-50%, -50%); /* Centralizar o pop-up */
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .suces-content {
+            text-align: center; /* Centralizar o conteúdo */
+            padding: 20px;
+        }
+
+        .suces-header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        img {
+            max-width: 30%; /* Garante que a imagem se ajuste ao contêiner */
+            
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+        #erro.popup {
+            /* Estilos específicos para o pop-up de erro */
+            background-color: #FF6347; /* Cor de fundo vermelha para indicar erro */
+        }
+
+        #erro .popup-content {
+            /* Estilos específicos para o conteúdo do pop-up de erro */
+            text-align: center; /* Centralizar o conteúdo */
+        }
+
+        #erro .popup-header {
+            /* Estilos específicos para o cabeçalho do pop-up de erro */
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: white; /* Cor do texto do cabeçalho */
+        }
+
+        #erro img {
+            max-width: 100%; /* Garante que a imagem se ajuste ao contêiner */
+            height: auto; /* Mantém a proporção da imagem */
+        }
+
+        #erro button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #FF6347; /* Cor de fundo vermelha para o botão de erro */
+            color: white; /* Cor do texto do botão de erro */
+            border: none;
+            cursor: pointer;
+        }
+
+            #erro button:hover {
+                background-color: #FF4500; /* Cor de fundo vermelha mais escura no hover do botão de erro */
+            }
+        .erros {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+            text-align: center;
+        }
+
+        .erros-content {
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+            color: black;
+        }
     </style>
 </head>
 
@@ -284,8 +388,26 @@
         <input type="number" id="codigo-barras" placeholder="Código de Barras:" required>
 
 
-        <button id ="Botaos" class="submit-database" onclick="enviarDadosAoBanco()">Enviar ao Banco de Dados Para Automação</button>
+        <button id="Botaos" class="submit-database" onclick="enviarDadosAoBanco()">Enviar ao Banco de Dados Para Automação</button>
     </div>
+    <div id="suces" class="suces">
+        <div class="suces-content">
+            <div class="suces-header">
+                SUCESSO
+            </div>
+            <img src="https://cdn.pixabay.com/animation/2023/06/13/15/12/15-12-47-323_512.gif" alt="Imagem de Sucesso">
+            <p class="black" style="color: black;">Produto enviado com sucesso para automação.</p>
+            <button id="close-button">Fechar</button>
+        </div>
+    </div>
+    <div id="erros" class="erros">
+        <div class="erros-content">
+            <img src="https://www.itauunibancoclube.com.br/portal/assets/images/cvv-gifs/error01.gif" alt="Erro">
+            <p style="color: black;"id="mensagem-erro">ERRO AO ENVIAR PRODUTO (MOTIVO): PRODUTO JA CADASTRADO AO BANCO DE DADOS</p>
+            <span class="close-button" onclick="closeErros()">Fechar</span>
+        </div>
+    </div>
+
     <div class="button-container">
         <button class="scan" onclick="scanBarcode()">Scanear de Códigos de Barras</button>
         <button class="clear" onclick="limparFormulario()">Limpar Formulário</button>
@@ -297,6 +419,7 @@
         <a href="#" onclick="changeTheme('dark')">Tema Escuro</a>
         <a href="#" onclick="changeTheme('white')">Tema Branco</a>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         var minhaVariavelGlobal = false;
@@ -343,16 +466,33 @@
 
             if (minhaVariavelGlobal === true) {
 
-                alert("ERRO AO ENVIAR PRODUTO (MOTIVO): PRODUTO JA CADASTRADO AO BANCO DE DADOS")
+                erros.style.display = 'block';
+
+                // Fecha o pop-up após 5 segundos
+                setTimeout(function () {
+                    document.getElementById('erros').style.display = 'none';
+                    closeErros();
+                }, 5000); // 5000 milissegundos = 5 segundos
                 const INPS = document.getElementById("codigo-barras");
 
                 // Defina o novo valor do input
                 INPS.value = " ";
                 minhaVariavelGlobal = false;
             }
+
             else {
                 if (produto.trim() === "" || descript.trim() === "" || cdb.trim() === "") {
-                    alert("Por favor, preencha todos os campos antes de enviar os dados.");
+                    
+
+                    var paragrafo = document.getElementById('mensagem-erro');
+                    paragrafo.textContent = 'Por favor, preencha todos os campos antes de enviar os dados.';
+                    erros.style.display = 'block';
+
+                    // Fecha o pop-up após 5 segundos
+                    setTimeout(function () {
+                        paragrafo.textContent = 'ERRO AO ENVIAR PRODUTO (MOTIVO): PRODUTO JA CADASTRADO AO BANCO DE DADOS';
+                        document.getElementById('erros').style.display = 'none';
+                    }, 5000); // 5000 milissegundos = 5 segundos
                     return; // Impede que o código continue se os campos não estiverem preenchidos
                 }
                 else {
@@ -374,9 +514,11 @@
 
                         .then(data => {
 
+                            const suces = document.getElementById("suces");
 
+                            suces.style.display = "block";
                             console.log(data);
-                            alert("PRODUTO ADICIONADO COM SUCESSO!")
+                            
                             document.getElementById("nome-produtoO").value = "";
                             document.getElementById("descricao").value = "";
                             document.getElementById("codigo-barras").value = "";
@@ -384,11 +526,15 @@
                         })
                         .catch(error => console.error(error));
                 }
-                
-}
-            
+
+            }
+
 
         }
+        const closeButton = document.getElementById("close-button");
+        closeButton.addEventListener("click", function () {
+            suces.style.display = "none";
+        });
         function esconderBotao() {
             var botao = document.getElementById("Botaos");
             console.log(botao); // Verifique se o botão foi encontrado corretamente
@@ -399,15 +545,15 @@
             console.log(botao); // Verifique se o botão foi encontrado corretamente
             botao.style.visibility = "visible";
         }
-   
+
         function verificarSempreQueAtualizar() {
             // Obtém o elemento com o ID "codigo-barras"Botaos
             const desci = document.getElementById("meuID");
             const codigoBarrasInput = document.getElementById("codigo-barras");
-           
+
             const produtoInput = document.getElementById("nome-produtoO");
             codigoBarrasInput.addEventListener("input", function () {
-                
+
                 const cdbS = codigoBarrasInput.value;
 
                 axios({
@@ -430,20 +576,24 @@
                             console.log(verdescri);
 
                             // Verifique se cdb é igual a vercodigos
-                            if (cdbS === vercodigos)
-                            {
+                            if (cdbS === vercodigos) {
                                 minhaVariavelGlobal = true;
-                               
+                                erros.style.display = 'block';
                                 // Faça algo sempre que o input for atualizado e a condição for atendida
                                 console.log("Encontrou um valor igual: " + cdbS);
-                                alert("CODIGO DE BARRAS JA EXISTENTE AO BANCO DE DADOS.");
+                               
                                 produtoInput.value = vernomes;
                                 desci.textContent += verdescri;
+                               
 
-                       
-                                
+                                // Fecha o pop-up após 5 segundos
+                                setTimeout(function () {
+                                    document.getElementById('erros').style.display = 'none';
+                                }, 5000);
+
+
                             }
-            
+
 
                         });
                     })
@@ -452,7 +602,9 @@
                     });
             });
         }
-
+        function closeErros() {
+            document.getElementById('erros').style.display = 'none';
+        }
     </script>
 </body>
 </html>
