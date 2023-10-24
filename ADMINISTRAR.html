@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <style>
+        .popup-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Pop-up conteúdo */
+        .popup-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(to bottom, #ff4d4d, #ff9999);
+            border: 2px solid #ff3333;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 300px;
+            color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            animation: popup-fade-in 0.3s ease;
+        }
+
+        /* Estilos para os botões do pop-up */
+        .popup-btn {
+            margin: 0 10px;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .popup-btn-yes {
+            background: #ff4d4d;
+            color: white;
+        }
+
+        .popup-btn-no {
+            background: #fff;
+            border: 1px solid #ff4d4d;
+            color: #ff4d4d;
+        }
+
+        /* Animação de fade-in do pop-up */
+        @keyframes popup-fade-in {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .panel {
+            width: 45%;
+            min-height: 300px;
+            border: 2px solid #1e90ff;
+            padding: 10px;
+            margin: 10px;
+            background-color: #222;
+            overflow: auto;
+            border-radius: 10px;
+            display: none;
+            transition: all 0.3s ease-in-out;
+        }
+
+            .panel:hover {
+                border-color:chartreuse /* Altera a cor da borda para verde ao passar o mouse sobre o painel */
+            }
+
+        .panel2:hover {
+            border-color: red; /* Altera a cor da borda para vermelho ao passar o mouse sobre o panel2 */
+        }
+
+
+        .panel1.dragging, .panel2.dragging {
+            width: 50%; /* Aumenta a largura dos painéis enquanto arrasta a div */
+        }
+        .delete-button {
+            background-color: white;
+            border: none;
+            margin-top: -8%;
+            margin-left: 92%;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+
+        .delete-button:hover {
+            background-color:brown;
+            
+
+        }
+        .draggable {
+            cursor: grab;
+            cursor: -webkit-grab;
+            background-color: #1e90ff;
+            color: white;
+            padding: 5px;
+            margin: 5px;
+            border-radius: 5px;
+            user-drag: none;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            background-color: #1e90ff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+            .logo img {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+            }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #1e90ff;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #444;
+        }
+
+        #login-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        #login-form {
+            display: inline-block;
+            background-color: #222;
+            padding: 20px;
+            border: 2px solid #1e90ff;
+            border-radius: 10px;
+        }
+
+            #login-form input {
+                padding: 10px;
+                margin: 10px;
+                border: 1px solid #1e90ff;
+                border-radius: 5px;
+            }
+
+            #login-form button {
+                padding: 10px 20px;
+                background-color: #1e90ff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            .fa-trash-alt:hover {
+                color:white; /* Define a cor quando o mouse passa por cima */
+            }
+
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+    <div id="login-container">
+        <form id="login-form">
+            <input type="text" id="username" placeholder="Nome de usuário">
+            <input type="password" id="password" placeholder="Senha">
+            <button type="button" onclick="authenticate()">Login</button>
+        </form>
+    </div>
+
+    <div class="panel" id="panel1" ondrop="drop(event, 'panel1')" ondragover="allowDrop(event)">
+        <h2>Usuários com Acesso</h2>
+
+
+    </div>
+
+    <div class="panel panel2" id="panel2" ondrop="drop(event, 'panel2')" ondragover="allowDrop(event)" onmouseover="makeRedBorder()" onmouseout="removeRedBorder()">
+        <h2>Usuários sem Acesso</h2>
+    </div>
+
+    <div class="logo-container">
+        <div class="logo">
+            <img src="https://media.licdn.com/dms/image/C4E0BAQEfwWU9zchODg/company-logo_200_200/0/1653061757187?e=2147483647&v=beta&t=ByaaLFg8Am9B3YSoC6jOH8NGzlvwe2S7Qd4OJ4QWECw" alt="Logo">
+        </div>
+    </div>
+    <button class="delete-button" id="draggable-button">
+        <i class="fas fa-trash-alt" style="color: red; font-size: 24px;"></i>
+
+    </button>
+    <div class="popup-container" id="popup">
+        <div class="popup-content">
+            <div style="font-size: 24px;">EXCLUIR</div>
+            <p id="texto">MATHEUS</p>
+            <p>Tem certeza que deseja excluir o usuário da lista?</p>
+            <button class="popup-btn popup-btn-yes" onclick="outraFuncao(idDaDivArrastada)">Sim</button>
+            <button class="popup-btn popup-btn-no" onclick="closePopup()">Não</button>
+        </div>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Cargo</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Matheus Henrique</td>
+                <td>Desenvolvedor</td>
+                <td>matheush2113@gmail.com</td>
+            </tr>
+            <tr>
+                <td>Jhenifer</td>
+                <td>RH</td>
+                <td>Jhenifer@example.com</td>
+            </tr>
+            <tr>
+                <td>Flavio</td>
+                <td>Gerente</td>
+                <td>Flavio@example.com</td>
+            </tr>
+            <tr>
+                <td>Cleberson</td>
+                <td>Sub Gerente</td>
+                <td>Cleberson@example.com</td>
+            </tr>
+        </tbody>
+    </table>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        var cpfs = [];
+        var senhas = [];
+        var aces = [];
+        var colaborador = [];
+        var idfuncionario = [];
+        var index = 0;
+        var idDaDivArrastada; 
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+
+        function drag(event) {
+            event.dataTransfer.setData("text", event.target.id);
+        }
+
+        function drop(event, panelId) {
+            event.preventDefault();
+            var data = event.dataTransfer.getData("text");
+            var draggedUser = document.getElementById(data);
+
+            if (panelId === 'panel1') {
+                document.getElementById('panel1').appendChild(draggedUser);
+            } else if (panelId === 'panel2') {
+                document.getElementById('panel2').appendChild(draggedUser);
+            }
+        }
+
+        function authenticate() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            if (username === "70411289624" && password === "matheus") {
+                document.getElementById("login-container").style.display = "none";
+                checkLogin();
+
+                document.getElementById("panel1").style.display = "block";
+                document.getElementById("panel2").style.display = "block";
+            } else {
+                alert("Login inválido. Verifique o nome de usuário e a senha.");
+            }
+        }
+        const draggableButton = document.getElementById('draggable-button');
+
+        // Adiciona um ouvinte de evento de inicialização de arrastar
+        draggableButton.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', ''); // Define os dados a serem transferidos durante o arrasto
+        });
+
+        // Ouvinte de evento para permitir soltar
+        draggableButton.addEventListener('dragover', (e) => {
+            e.preventDefault(); // Impede o comportamento padrão de não permitir soltar
+        });
+
+        // Ouvinte de evento para quando o elemento é solto
+        draggableButton.addEventListener('drop', (e) => {
+            event.preventDefault();
+            var data = event.dataTransfer.getData("text");
+            var draggedUser = document.getElementById(data);
+           
+            idDaDivArrastada = draggedUser.id;
+            document.getElementById("texto").textContent = draggedUser.textContent;
+            
+            showPopup();
+            if (panelId === 'panel1') {
+                document.getElementById('panel1').appendChild(draggedUser);
+            } else if (panelId === 'panel2') {
+                document.getElementById('panel2').appendChild(draggedUser);
+            }
+            
+            // Defina o conteúdo do elemento "texto" como o id do usuário arrastado
+            
+            
+        });
+        div.onclick = function () {
+            idfuncionario = this.id;
+
+        };
+        function createDiv(elementId, text, userId) {
+            var div = document.createElement("div");
+            div.className = "draggable";
+            div.draggable = true;
+            div.id = idfuncionario[index];
+            div.textContent = text;
+            div.setAttribute("draggable", "true");
+            div.ondragstart = function (e) {
+                e.dataTransfer.setData("text", e.target.id);
+            };
+            div.ondragend = function (e) {
+                var panelId = e.target.closest(".panel").id;
+                var userId = e.target.id;
+                funcio = e.target.id;
+                if (panelId === "panel1") {
+                    console.log("ACESSO CONCEDIDO");
+                    const apiUrl = `https://api.baserow.io/api/database/rows/table/208005/${userId}/?user_field_names=true`;
+                    const token = "PUvStdXJlDa0GsRVweZL5qb6mknFgC8a";
+
+                    axios({
+                        method: "PATCH",
+                        url: apiUrl,
+                        headers: {
+                            Authorization: "Token " + token,
+                            "Content-Type": "application/json"
+                        },
+                        data: {
+                            "ACESSO": true
+                           
+                        }
+                    })
+                        .then(function (response) {
+                            document.getElementById("apiResponse").innerHTML = JSON.stringify(response.data, null, 2);
+                        })
+                        .catch(function (error) {
+                            document.getElementById("apiResponse").innerHTML = "Erro ao fazer a solicitação: " + error.message;
+                        });
+                }
+                if (panelId === "panel2") {
+                    console.log("ACESSO REVOKED");
+                    const apiUrl = `https://api.baserow.io/api/database/rows/table/208005/${userId}/?user_field_names=true`;
+                    const token = "PUvStdXJlDa0GsRVweZL5qb6mknFgC8a";
+
+                    axios({
+                        method: "PATCH",
+                        url: apiUrl,
+                        headers: {
+                            Authorization: "Token " + token,
+                            "Content-Type": "application/json"
+                        },
+                        data: {
+                            "ACESSO": false
+                        }
+                    })
+                        .then(function (response) {
+                            document.getElementById("apiResponse").innerHTML = JSON.stringify(response.data, null, 2);
+                        })
+                        .catch(function (error) {
+                            document.getElementById("apiResponse").innerHTML = "Erro ao fazer a solicitação: " + error.message;
+                        });
+                }
+            };
+
+            return div;
+        }
+
+        function checkLogin() {
+            axios({
+                method: "GET",
+                url: "https://api.baserow.io/api/database/rows/table/208005/?user_field_names=true",
+                headers: {
+                    Authorization: "Token PUvStdXJlDa0GsRVweZL5qb6mknFgC8a" // Substitua pelo seu token real
+                }
+            })
+                .then(response => {
+                    const panels = {
+                        panel1: document.getElementById("panel1"),
+                        panel2: document.getElementById("panel2")
+                    };
+
+                    response.data.results.forEach(table => {
+                        cpfs.push(table.USUARIOS);
+                        senhas.push(table.SENHAD);
+                        aces.push(table.ACESSO);
+                        colaborador.push(table.COLABORADOR);
+                        idfuncionario.push(table.IDUSER);
+
+                        var newDiv = createDiv(table.IDUSER, colaborador[index] + " CPF: " + cpfs[index]);
+
+                        if (aces[index] === true) {
+                            panels.panel1.appendChild(newDiv);
+                        } else if (aces[index] === false) {
+                            panels.panel2.appendChild(newDiv);
+                            newDiv.setAttribute("draggable", "true");
+                        }
+
+                        index++;
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                });
+        }
+        function makeRedBorder() {
+            var panel2 = document.getElementById('panel2');
+            panel2.classList.add('red-border');
+        }
+
+        // Função para remover a classe red-border ao tirar o mouse do panel2
+        function removeRedBorder() {
+            var panel2 = document.getElementById('panel2');
+            panel2.classList.remove('red-border');
+        }
+        var button = document.getElementById("draggable-button");
+
+        // Adicionar um ouvinte de evento para o evento "mouseover" (passar o mouse por cima)
+        button.addEventListener("mouseover", function () {
+            // Aqui você pode adicionar a ação que deseja executar quando o mouse passar por cima do botão.
+            // Por exemplo, você pode exibir uma mensagem ou executar alguma outra ação.
+               
+        });
+
+        function showPopup() {
+
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        // Função para fechar o pop-up
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        // Função para excluir o usuário (substitua com sua lógica)
+        function outraFuncao(idDaDivArrastada) {
+            
+
+            axios({
+                method: "DELETE",
+                url: `https://api.baserow.io/api/database/rows/table/208005/${idDaDivArrastada}/`,
+                headers: {
+                    Authorization: "Token PUvStdXJlDa0GsRVweZL5qb6mknFgC8a"
+                }
+            })
+                .then(response => {
+                    if (response.status === 204) {
+
+                        console.log("USUARIO DELETADO");
+                        alert("usuario deletado");
+                        closePopup();
+
+                    } else {
+                        console.log("USUARIOS DELETADO");
+                        closePopup();
+                    }
+                })
+                .catch(error => {
+                   
+                    console.error(error);
+                    closePopup();
+                });
+
+        }
+
+
+
+    </script>
+</body>
+</html>
