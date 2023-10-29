@@ -512,6 +512,23 @@
             document.getElementById("vencimento").value = "";
 
         }
+        document.getElementById("codigo-barras").addEventListener("click", function () {
+            var campo = document.getElementById("codigo-barras");
+            campo.focus();
+
+            // Verifica se o navegador suporta a API Clipboard
+            if (navigator.clipboard) {
+                navigator.clipboard.readText().then(function (text) {
+                    campo.value = text;
+                }).catch(function (err) {
+                    console.error("Erro ao colar: " + err);
+                });
+            } else {
+                // Se o navegador não suporta a API Clipboard, você pode usar o comando de colar.
+                campo.select();
+                document.execCommand("paste");
+            }
+        });
 
         function digitar() {
             const newPageURL = 'ACHARPRODUTOS.html'; // Replace with the actual URL of the new page
