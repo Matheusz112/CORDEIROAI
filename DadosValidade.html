@@ -325,7 +325,7 @@
                     <th>QUANTIDADE</th>
                     <th>CÓDIGO DE BARRAS</th>
                     <th>VENCIMENTO</th>
-                    <th>SITUAÇÃO DO PRODUTO</th>
+              
                     <th>DIAS PARA VENCER</th>
                     <th>ID PRODUTO</th>
                 </tr>
@@ -396,16 +396,41 @@
                         const dataFormatada = `${dia}/${mes}/${ano}`;
 
                         const vencimentoColuna = document.createElement("td");
-                        vencimentoColuna.textContent = dataFormatada;
+
+                        vencimentoColuna.textContent = table.VENCIMENTO;
                         linha.appendChild(vencimentoColuna);
 
-                        const idTrue = document.createElement("td");
-                        idTrue.textContent = table.SIT;
-                        linha.appendChild(idTrue);
 
+                        
+
+                        
                         const idTruee = document.createElement("td");
-                        idTruee.textContent = table.diferenca;
-                        linha.appendChild(idTruee);
+                        var dataInput = table.VENCIMENTO; // Certifique-se de que table.VENCIMENTO está no formato "dd/mm/yyyy"
+                        var partesData = dataInput.split('/');
+                        var dataVerificar = new Date(partesData[2], partesData[1] - 1, partesData[0]); // Ano, mês e dia
+                        var dataAtual = new Date();
+
+                        var diaAtual = String(dataAtual.getDate()).padStart(2, '0');
+                        var mesAtual = String(dataAtual.getMonth() + 1).padStart(2, '0');
+                        var anoAtual = dataAtual.getFullYear();
+                        var dataAtualFormatada = `${diaAtual}/${mesAtual}/${anoAtual}`;
+                        dataVerificar.setDate(dataVerificar.getDate() + 1); 
+                        var diferencaMilissegundos = dataVerificar - dataAtual;
+                        var diferencaDias = Math.floor(diferencaMilissegundos / (1000 * 60 * 60 * 24));
+
+                        if (diferencaDias > 0) {
+                            idTruee.textContent = "Faltam " + diferencaDias + " dias para a vencer.";
+                            linha.appendChild(idTruee);
+                        } else if (diferencaDias < 0) {
+                            idTruee.textContent = "Venceu a " + Math.abs(diferencaDias) + " dias. atras";
+                            linha.appendChild(idTruee);
+                        } else if (dataInput === dataAtualFormatada) {
+                            idTruee.textContent = "Vencendo hoje!";
+                            linha.appendChild(idTruee);
+                        }
+
+
+                         
 
                         const idColuna = document.createElement("td");
                         idColuna.textContent = table.id;
@@ -512,7 +537,7 @@
         function confirmExit() {
             var exit = confirm('Tem certeza que deseja sair?');
             if (exit) {
-                window.open("ADMINISTRAR.html", "_blank");
+                // Adicione aqui a lógica para sair da aplicação
             }
         }
         document.getElementById("fechar-enviado").addEventListener("click", function () {
